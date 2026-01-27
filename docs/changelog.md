@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Enhanced .gitignore with comprehensive patterns for Python (bytecode, eggs, mypy, ruff), Node.js (cache, build outputs), testing/coverage, TypeScript, and various development tools
+
 ---
 
 ## [0.1.0] - 2026-01-27
