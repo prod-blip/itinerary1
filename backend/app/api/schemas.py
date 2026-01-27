@@ -49,6 +49,7 @@ class TravelSegment(BaseModel):
     to_location_id: str = Field(..., description="ID of the destination location")
     duration_minutes: int = Field(..., ge=0, description="Travel duration in minutes")
     distance_km: float = Field(..., ge=0, description="Travel distance in kilometers")
+    polyline: str | None = Field(default=None, description="Encoded polyline for the route")
 
 
 class DayPlan(BaseModel):

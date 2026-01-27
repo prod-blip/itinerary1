@@ -9,6 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [0.1.1] - 2026-01-27
+
+### Added
+
+- **Real road-following routes:** Routes now follow actual roads using Google Directions API instead of straight lines
+- **Google Directions API integration:** Added `get_directions()` method to GoogleMapsService with waypoint batching support (1 API call per day)
+- **Encoded polylines:** TravelSegment schema now includes encoded polyline field for efficient route storage and transmission
+- **Route enrichment:** Itinerary generation now automatically enriches travel segments with real driving times, distances, and polylines
+- **Floating day selector:** Interactive map overlay for filtering itinerary by day with "All" option and numbered day buttons
+- **Mobile-responsive layout:** Map displayed at 50vh on mobile devices with scrollable content below, desktop retains split view
+- **Polyline decoding:** Frontend decodes and renders actual route polylines using @mapbox/polyline library
+- **Scrollbar-hide utility:** Added CSS utility for clean horizontal scrolling in day selector
+
+### Changed
+
+- Map routes now use decoded polylines from Directions API when available, fallback to straight lines
+- Mobile layout switched to stacked view (map on top, content below) using `flex-col-reverse`
+- Replaced static day color legend with interactive floating day selector
+- Improved touch targets in MapDaySelector with minimum 44px size
+- Updated dependencies: added `polyline==2.0.2` (backend), `@mapbox/polyline` + types (frontend)
+
 ### Fixed
 
 - Itinerary generation now respects user edits (removed/added locations) instead of using original LLM suggestions (GitHub issue #1)

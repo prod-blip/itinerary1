@@ -1,7 +1,8 @@
 """
-Google Maps API wrapper for Places, Geocoding, and Distance Matrix APIs.
+Google Maps API wrapper for Places, Geocoding, Directions, and Distance Matrix APIs.
 """
 import httpx
+import polyline as pl
 from typing import Any
 
 
@@ -269,4 +270,79 @@ class GoogleMapsService:
                 "lat": location.get("lat"),
                 "lng": location.get("lng"),
                 "formatted_address": result.get("formatted_address"),
+            }
+
+    async def get_directions(
+        self,
+        origin: str,
+        destination: str,
+        waypoints: list[str] | None = None,
+        mode: str = "driving"
+    ) -> dict[str, Any]:
+        """
+        Get directions with encoded polyline between locations.
+
+        Args:
+            origin: Origin coordinates as "lat,lng" string
+            destination: Destination coordinates as "lat,lng" string
+            waypoints: Optional list of intermediate coordinates as "lat,lng" strings
+            mode: Travel mode (driving, walking, bicycling, transit)
+
+        Returns:
+            Dictionary with:
+            - legs: List of leg data with duration_seconds, distance_meters, polyline
+            - overview_polyline: Encoded polyline for entire route
+        """
+        url = f"{self.base_url}/directions/json"
+        params: dict[str, Any] = {
+            "origin": origin,
+            "destination": destination,
+            "mode": mode,
+            "key": self.api_key,
+        }
+
+        if waypoints:
+            params["waypoints"] = "|".join(waypoints)
+
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, params=params, timeout=15.0)
+            response.raise_for_status()
+            data = response.json()
+
+            if data.get("status") != "OK":
+                if data.get("status") == "ZERO_RESULTS":
+                    return {"legs": [], "overview_polyline": None}
+                raise ValueError(f"Google Directions API error: {data.get('status')}")
+
+            route = data.get("routes", [{}])[0]
+            legs_data = []
+
+            for leg in route.get("legs", []):
+                # Combine all step polylines into a single leg polyline
+                all_points: list[tuple[float, float]] = []
+                for step in leg.get("steps", []):
+                    step_polyline = step.get("polyline", {}).get("points")
+                    if step_polyline:
+                        decoded = pl.decode(step_polyline)
+                        # Avoid duplicating the last point of previous step
+                        if all_points and decoded and all_points[-1] == decoded[0]:
+                            decoded = decoded[1:]
+                        all_points.extend(decoded)
+
+                # Re-encode the combined points
+                leg_polyline = pl.encode(all_points) if all_points else None
+
+                legs_data.append({
+                    "duration_seconds": leg.get("duration", {}).get("value"),
+                    "duration_text": leg.get("duration", {}).get("text"),
+                    "distance_meters": leg.get("distance", {}).get("value"),
+                    "distance_text": leg.get("distance", {}).get("text"),
+                    "start_address": leg.get("start_address"),
+                    "end_address": leg.get("end_address"),
+                    "polyline": leg_polyline,
+                })
+
+            return {
+                "legs": legs_data,
+                "overview_polyline": route.get("overview_polyline", {}).get("points"),
             }

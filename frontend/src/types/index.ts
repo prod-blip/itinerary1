@@ -29,6 +29,7 @@ export interface TravelSegment {
   to_location_id: string;
   duration_minutes: number;
   distance_km: number;
+  polyline?: string;
 }
 
 export interface DayPlan {

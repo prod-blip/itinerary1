@@ -6,6 +6,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 
 from ..config import settings
+from ..services.google_maps import GoogleMapsService
 
 
 ITINERARY_PROMPT = """You are a travel itinerary optimizer. Create a day-by-day itinerary from the given locations.
@@ -95,12 +96,19 @@ async def generate_itinerary_simple(
 
             # Validate and fix the itinerary structure
             itinerary = _validate_itinerary(itinerary, locations, num_days)
+
+            # Enrich with real route data (polylines, actual travel times)
+            itinerary = await _enrich_itinerary_with_routes(itinerary, locations)
+
             return itinerary
     except Exception as e:
         print(f"Error generating itinerary: {e}")
 
     # Fallback: create a simple itinerary
-    return _create_fallback_itinerary(locations, num_days)
+    fallback = _create_fallback_itinerary(locations, num_days)
+    # Still try to enrich fallback with routes
+    fallback = await _enrich_itinerary_with_routes(fallback, locations)
+    return fallback
 
 
 def _validate_itinerary(itinerary: dict, locations: list[dict], num_days: int) -> dict:
@@ -156,3 +164,88 @@ def _create_fallback_itinerary(locations: list[dict], num_days: int) -> dict:
         "total_locations": len(locations),
         "validation_notes": ["Generated using simple distribution"],
     }
+
+
+async def _enrich_itinerary_with_routes(
+    itinerary: dict,
+    locations: list[dict]
+) -> dict:
+    """
+    Enrich itinerary with real route data from Google Directions API.
+
+    For each day, fetches directions between all locations using waypoints
+    (1 API call per day) and updates travel_times with real duration,
+    distance, and polylines.
+
+    Args:
+        itinerary: The generated itinerary with day structure
+        locations: List of location dictionaries with id, lat, lng
+
+    Returns:
+        Enriched itinerary with real route data
+    """
+    if not settings.GOOGLE_MAPS_API_KEY:
+        return itinerary
+
+    maps_service = GoogleMapsService(settings.GOOGLE_MAPS_API_KEY)
+
+    # Build location lookup by ID
+    location_lookup = {loc["id"]: loc for loc in locations}
+
+    for day in itinerary.get("days", []):
+        day_location_ids = day.get("locations", [])
+        if len(day_location_ids) < 2:
+            continue
+
+        # Get coordinates for all locations in order
+        day_coords = []
+        for loc_id in day_location_ids:
+            loc = location_lookup.get(loc_id)
+            if loc:
+                day_coords.append(f"{loc['lat']},{loc['lng']}")
+
+        if len(day_coords) < 2:
+            continue
+
+        try:
+            # Call directions API with waypoints (1 call per day)
+            origin = day_coords[0]
+            destination = day_coords[-1]
+            waypoints = day_coords[1:-1] if len(day_coords) > 2 else None
+
+            directions = await maps_service.get_directions(
+                origin=origin,
+                destination=destination,
+                waypoints=waypoints,
+                mode="driving"
+            )
+
+            legs = directions.get("legs", [])
+
+            # Update travel_times with real data
+            new_travel_times = []
+            for i, leg in enumerate(legs):
+                if i >= len(day_location_ids) - 1:
+                    break
+
+                from_id = day_location_ids[i]
+                to_id = day_location_ids[i + 1]
+
+                duration_seconds = leg.get("duration_seconds") or 0
+                distance_meters = leg.get("distance_meters") or 0
+
+                new_travel_times.append({
+                    "from_location_id": from_id,
+                    "to_location_id": to_id,
+                    "duration_minutes": round(duration_seconds / 60),
+                    "distance_km": round(distance_meters / 1000, 1),
+                    "polyline": leg.get("polyline"),
+                })
+
+            day["travel_times"] = new_travel_times
+
+        except Exception as e:
+            print(f"Error fetching routes for day {day.get('day_number')}: {e}")
+            # Keep existing travel_times if API fails
+
+    return itinerary

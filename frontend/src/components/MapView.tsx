@@ -3,8 +3,19 @@
 import { useRef, useEffect, useMemo, useCallback } from 'react';
 import Map, { Marker, Source, Layer, NavigationControl, MapRef } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import polyline from '@mapbox/polyline';
 import { Location, Itinerary, DAY_COLORS } from '@/types';
 import { useTripStore } from '@/stores/tripStore';
+import MapDaySelector from './MapDaySelector';
+
+/**
+ * Decode a Google-encoded polyline string to array of [lng, lat] coordinates.
+ * Note: Google returns [lat, lng], but GeoJSON needs [lng, lat].
+ */
+function decodePolyline(encoded: string): [number, number][] {
+  const decoded = polyline.decode(encoded);
+  return decoded.map(([lat, lng]) => [lng, lat] as [number, number]);
+}
 
 interface MapViewProps {
   locations: Location[];
@@ -134,17 +145,38 @@ export default function MapView({
     }
   }, [bounds]);
 
-  // Generate route lines for itinerary
+  // Generate route lines for itinerary using polylines when available
   const routeGeoJSON = useMemo(() => {
     if (!itinerary) return null;
 
     const features = itinerary.days
       .filter((day) => selectedDay === null || day.day_number === selectedDay)
       .flatMap((day) => {
-        // day.locations is an array of Location objects
         const dayLocations = day.locations;
-        const coordinates: [number, number][] = [];
+        const travelTimes = day.travel_times || [];
 
+        // Check if we have polylines in travel_times
+        const hasPolylines = travelTimes.some((t) => t.polyline);
+
+        if (hasPolylines && travelTimes.length > 0) {
+          // Use actual road polylines from travel_times
+          return travelTimes
+            .filter((t) => t.polyline)
+            .map((segment) => ({
+              type: 'Feature' as const,
+              properties: {
+                dayNumber: day.day_number,
+                color: getDayColor(day.day_number),
+              },
+              geometry: {
+                type: 'LineString' as const,
+                coordinates: decodePolyline(segment.polyline!),
+              },
+            }));
+        }
+
+        // Fallback: straight lines between locations
+        const coordinates: [number, number][] = [];
         dayLocations.forEach((loc) => {
           coordinates.push([loc.lng, loc.lat]);
         });
@@ -277,6 +309,15 @@ export default function MapView({
         })}
       </Map>
 
+      {/* Day selector for multi-day itineraries */}
+      {itinerary && itinerary.days.length > 1 && (
+        <MapDaySelector
+          days={itinerary.days}
+          selectedDay={selectedDay}
+          onSelectDay={store.setSelectedDay}
+        />
+      )}
+
       {/* Empty state overlay */}
       {locations.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-80 pointer-events-none">
@@ -301,23 +342,6 @@ export default function MapView({
         </div>
       )}
 
-      {/* Day color legend (when viewing all days with itinerary) */}
-      {itinerary && selectedDay === null && itinerary.days.length > 1 && (
-        <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg p-3 z-10">
-          <p className="text-xs font-medium text-gray-500 mb-2">Day Colors</p>
-          <div className="flex flex-wrap gap-2">
-            {itinerary.days.map((day) => (
-              <div key={day.day_number} className="flex items-center gap-1.5">
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: getDayColor(day.day_number) }}
-                />
-                <span className="text-xs text-gray-600">Day {day.day_number}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

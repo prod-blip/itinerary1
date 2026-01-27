@@ -113,9 +113,9 @@ export default function TripPage() {
       </header>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-        {/* Left panel - Location list or Itinerary */}
-        <div className="w-full lg:w-2/5 overflow-y-auto bg-white border-r border-gray-200">
+      <div className="flex-1 flex flex-col-reverse lg:flex-row overflow-hidden">
+        {/* Left panel - Location list or Itinerary (below map on mobile) */}
+        <div className="flex-1 lg:flex-none lg:w-2/5 overflow-y-auto bg-white lg:border-r border-gray-200">
           <div className="p-4">
             {showItinerary ? (
               <ItineraryView itinerary={itinerary} />
@@ -125,8 +125,8 @@ export default function TripPage() {
           </div>
         </div>
 
-        {/* Right panel - Map */}
-        <div className="flex-1 relative">
+        {/* Right panel - Map (on top on mobile, takes 50vh) */}
+        <div className="h-[50vh] lg:h-auto lg:flex-1 relative flex-shrink-0">
           <MapView
             locations={locations}
             itinerary={showItinerary ? itinerary : undefined}
