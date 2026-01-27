@@ -290,7 +290,7 @@ async def places_autocomplete(
     params = {
         "input": input,
         "key": settings.GOOGLE_MAPS_API_KEY,
-        "types": "(cities)",  # Focus on cities for destination search
+        "types": "(regions)",  # Allow cities, regions, countries, etc.
     }
 
     async with httpx.AsyncClient() as client:
