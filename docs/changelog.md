@@ -9,9 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Itinerary generation now respects user edits (removed/added locations) instead of using original LLM suggestions (GitHub issue #1)
+
 ### Changed
 
 - Enhanced .gitignore with comprehensive patterns for Python (bytecode, eggs, mypy, ruff), Node.js (cache, build outputs), testing/coverage, TypeScript, and various development tools
+- Trip store now tracks `originalLocations` and `removedIds` to properly pass user edits to the backend
 
 ---
 

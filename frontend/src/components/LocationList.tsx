@@ -23,6 +23,7 @@ export default function LocationList({
     threadId,
     removeLocation,
     addLocation,
+    removedIds,
     highlightedLocationId,
     setHighlightedLocation,
     setItinerary,
@@ -43,12 +44,12 @@ export default function LocationList({
     // Build the diff - user added locations are already full Location objects
     const addedLocations = locations.filter((loc) => loc.user_added);
 
-    // We need to track removed IDs from the store
+    // Pass removed IDs from the store's tracking
     generateItinerary(
       {
         threadId,
         edits: {
-          removed_ids: [], // This should come from the store's tracking
+          removed_ids: removedIds,
           added_locations: addedLocations,
         },
       },
