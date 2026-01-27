@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* MapLibre GL styles */
+@import 'maplibre-gl/dist/maplibre-gl.css';
+
+/* Custom base styles */
+@layer base {
+  body {
+    @apply antialiased;
+  }
+}
