@@ -1,8 +1,8 @@
 # Project Status
 
-**Current Phase:** Pre-development  
-**Active Milestone:** V0 — Foundational MVP  
-**Last Updated:** Project initialization
+**Current Phase:** MVP Complete
+**Active Milestone:** V0.1 — Day-wise map layers + route visualization
+**Last Updated:** 2026-01-27
 
 ---
 
@@ -10,7 +10,7 @@
 
 | Milestone | Goal | Status |
 |-----------|------|--------|
-| **V0** | End-to-end flow works once | 🔲 Not Started |
+| **V0** | End-to-end flow works once | ✅ Done |
 | V0.1 | Day-wise map layers + route visualization | 🔲 Not Started |
 | V1 | Polished human-in-the-loop experience | 🔲 Not Started |
 | V1.1 | PDF export + shareable links | 🔲 Not Started |
@@ -22,13 +22,13 @@
 
 ## V0 Checklist
 
-- [ ] Project structure setup (backend + frontend)
-- [ ] Trip intake form
-- [ ] Map with location pins (MapLibre + OSM)
-- [ ] Location Discovery agent node
-- [ ] Human-in-the-loop editing (remove/add locations)
-- [ ] Itinerary generation (text-first)
-- [ ] API endpoints working
+- [x] Project structure setup (backend + frontend)
+- [x] Trip intake form
+- [x] Map with location pins (MapLibre + OSM)
+- [x] Location Discovery agent node
+- [x] Human-in-the-loop editing (remove/add locations)
+- [x] Itinerary generation (text-first)
+- [x] API endpoints working
 
 ---
 
@@ -36,16 +36,18 @@
 
 | Date | Milestone | Update |
 |------|-----------|--------|
+| 2026-01-27 | V0 | ✅ MVP implementation complete - Full end-to-end flow working (intake → location discovery → editing → itinerary generation) |
 | — | V0 | Project specification completed |
 
 ---
 
 ## What's Next
 
-1. Set up project structure
-2. Initialize frontend (Next.js + MapLibre)
-3. Initialize backend (FastAPI + LangGraph)
-4. Build intake form
+1. Add day-wise map layer visualization with color-coded routes
+2. Improve itinerary generation with route optimization
+3. Add map route polylines connecting locations within each day
+4. Enhance mobile responsiveness
+5. Add loading states and error handling refinements
 
 ---
 
