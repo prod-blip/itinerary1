@@ -62,6 +62,12 @@ class DayPlan(BaseModel):
     travel_times: list[TravelSegment] = Field(
         default_factory=list, description="Travel segments between locations"
     )
+    route_optimized: bool = Field(
+        default=False, description="Whether the route order was optimized by TSP"
+    )
+    area_label: str | None = Field(
+        default=None, description="Optional label for the geographic area covered this day"
+    )
 
 
 class Itinerary(BaseModel):
@@ -122,6 +128,10 @@ class GenerateItineraryResponse(BaseModel):
     """Response with the generated itinerary."""
 
     itinerary: Itinerary = Field(..., description="The generated itinerary")
+    route_warnings: list[str] = Field(
+        default_factory=list,
+        description="Warnings about route calculation failures or estimates"
+    )
 
 
 class TripStateResponse(BaseModel):

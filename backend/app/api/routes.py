@@ -77,12 +77,15 @@ def _convert_state_itinerary_to_schema(
                 to_location_id=segment.get("to_location_id", ""),
                 duration_minutes=segment.get("duration_minutes", 0),
                 distance_km=segment.get("distance_km", 0.0),
+                polyline=segment.get("polyline"),
             ))
 
         days.append(DayPlan(
             day_number=day_data.get("day_number", len(days) + 1),
             locations=day_locations,
             travel_times=travel_times,
+            route_optimized=day_data.get("route_optimized", False),
+            area_label=day_data.get("area_label"),
         ))
 
     return Itinerary(
@@ -188,7 +191,7 @@ async def generate_itinerary(
                 final_locations.append(loc_dict)
 
         # Use the simple itinerary generator
-        raw_itinerary = await generate_itinerary_simple(
+        raw_itinerary, route_warnings = await generate_itinerary_simple(
             locations=final_locations,
             num_days=trip_params.get("num_days", 3),
             travel_style=trip_params.get("travel_style", "balanced"),
@@ -207,7 +210,10 @@ async def generate_itinerary(
                 validation_notes=["Failed to generate itinerary"],
             )
 
-        return GenerateItineraryResponse(itinerary=itinerary)
+        return GenerateItineraryResponse(
+            itinerary=itinerary,
+            route_warnings=route_warnings,
+        )
 
     except HTTPException:
         raise

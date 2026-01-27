@@ -36,6 +36,8 @@ export interface DayPlan {
   day_number: number;
   locations: Location[];
   travel_times: TravelSegment[];
+  route_optimized?: boolean;
+  area_label?: string;
 }
 
 export interface Itinerary {
@@ -78,6 +80,7 @@ export interface GenerateItineraryResponse {
   final_locations: Location[];
   validation_passed: boolean;
   validation_errors: string[];
+  route_warnings?: string[];
 }
 
 // Interest options for intake form

@@ -11,6 +11,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.0] - 2026-01-27
+
+### Added
+
+- **Toast notification system:** User-facing error and warning notifications using Sonner library
+- **Generation progress indicator:** Animated stepper showing itinerary generation phases (Organizing → Routing → Finishing)
+- **Route warnings:** Backend collects and returns warnings when route calculation fails; frontend displays warning toast
+- **Dashed lines for estimated routes:** Map shows dashed lines for routes without real polyline data
+- **Location clustering:** Pre-groups locations by geographic proximity before itinerary generation
+- **TSP route optimization:** Nearest neighbor algorithm optimizes location order within each day to minimize travel time
+- **Route optimization badge:** "Route optimized" badge displayed on days where TSP was applied
+- **Area labels:** Day headers can now show optional area labels for geographic grouping
+
+### Changed
+
+- `generate_itinerary_simple()` now returns tuple of (itinerary, warnings)
+- `_enrich_itinerary_with_routes()` now returns tuple and implements TSP optimization
+- DayPlan schema extended with `route_optimized` and `area_label` fields
+- GenerateItineraryResponse schema extended with `route_warnings` field
+- Map rendering split into solid routes (real polylines) and dashed routes (estimates)
+- Travel time indicators in itinerary view show "~" prefix and "est." suffix for estimated times
+
+### Dependencies
+
+- Added `sonner` package to frontend for toast notifications
+
+---
+
 ## [0.1.1] - 2026-01-27
 
 ### Added

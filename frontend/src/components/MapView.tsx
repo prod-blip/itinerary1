@@ -145,24 +145,40 @@ export default function MapView({
     }
   }, [bounds]);
 
-  // Generate route lines for itinerary using polylines when available
-  const routeGeoJSON = useMemo(() => {
-    if (!itinerary) return null;
+  // Generate route lines for itinerary - separate solid (real) and dashed (estimated)
+  const { solidRouteGeoJSON, dashedRouteGeoJSON } = useMemo(() => {
+    if (!itinerary) return { solidRouteGeoJSON: null, dashedRouteGeoJSON: null };
 
-    const features = itinerary.days
+    type RouteFeature = {
+      type: 'Feature';
+      properties: { dayNumber: number; color: string };
+      geometry: { type: 'LineString'; coordinates: [number, number][] };
+    };
+
+    const solidFeatures: RouteFeature[] = [];
+    const dashedFeatures: RouteFeature[] = [];
+
+    itinerary.days
       .filter((day) => selectedDay === null || day.day_number === selectedDay)
-      .flatMap((day) => {
+      .forEach((day) => {
         const dayLocations = day.locations;
         const travelTimes = day.travel_times || [];
 
-        // Check if we have polylines in travel_times
-        const hasPolylines = travelTimes.some((t) => t.polyline);
+        // Create a lookup for location coordinates
+        const locLookup: Record<string, { lng: number; lat: number }> = {};
+        dayLocations.forEach((loc) => {
+          locLookup[loc.id] = { lng: loc.lng, lat: loc.lat };
+        });
 
-        if (hasPolylines && travelTimes.length > 0) {
-          // Use actual road polylines from travel_times
-          return travelTimes
-            .filter((t) => t.polyline)
-            .map((segment) => ({
+        travelTimes.forEach((segment) => {
+          const fromLoc = locLookup[segment.from_location_id];
+          const toLoc = locLookup[segment.to_location_id];
+
+          if (!fromLoc || !toLoc) return;
+
+          if (segment.polyline) {
+            // Real route with polyline - solid line
+            solidFeatures.push({
               type: 'Feature' as const,
               properties: {
                 dayNumber: day.day_number,
@@ -170,21 +186,32 @@ export default function MapView({
               },
               geometry: {
                 type: 'LineString' as const,
-                coordinates: decodePolyline(segment.polyline!),
+                coordinates: decodePolyline(segment.polyline),
               },
-            }));
-        }
-
-        // Fallback: straight lines between locations
-        const coordinates: [number, number][] = [];
-        dayLocations.forEach((loc) => {
-          coordinates.push([loc.lng, loc.lat]);
+            });
+          } else {
+            // Estimated route without polyline - dashed line
+            dashedFeatures.push({
+              type: 'Feature' as const,
+              properties: {
+                dayNumber: day.day_number,
+                color: getDayColor(day.day_number),
+              },
+              geometry: {
+                type: 'LineString' as const,
+                coordinates: [
+                  [fromLoc.lng, fromLoc.lat],
+                  [toLoc.lng, toLoc.lat],
+                ],
+              },
+            });
+          }
         });
 
-        if (coordinates.length < 2) return [];
-
-        return [
-          {
+        // If no travel times but we have locations, draw dashed lines between them
+        if (travelTimes.length === 0 && dayLocations.length >= 2) {
+          const coordinates: [number, number][] = dayLocations.map((loc) => [loc.lng, loc.lat]);
+          dashedFeatures.push({
             type: 'Feature' as const,
             properties: {
               dayNumber: day.day_number,
@@ -194,13 +221,13 @@ export default function MapView({
               type: 'LineString' as const,
               coordinates,
             },
-          },
-        ];
+          });
+        }
       });
 
     return {
-      type: 'FeatureCollection' as const,
-      features,
+      solidRouteGeoJSON: solidFeatures.length > 0 ? { type: 'FeatureCollection' as const, features: solidFeatures } : null,
+      dashedRouteGeoJSON: dashedFeatures.length > 0 ? { type: 'FeatureCollection' as const, features: dashedFeatures } : null,
     };
   }, [itinerary, selectedDay]);
 
@@ -258,19 +285,43 @@ export default function MapView({
       >
         <NavigationControl position="top-right" />
 
-        {/* Route lines */}
-        {routeGeoJSON && routeGeoJSON.features.length > 0 && (
-          <Source id="routes" type="geojson" data={routeGeoJSON}>
+        {/* Solid route lines (real routes with polylines) */}
+        {solidRouteGeoJSON && (
+          <Source id="solid-routes" type="geojson" data={solidRouteGeoJSON}>
             {itinerary?.days.map((day) => (
               <Layer
-                key={`route-${day.day_number}`}
-                id={`route-${day.day_number}`}
+                key={`solid-route-${day.day_number}`}
+                id={`solid-route-${day.day_number}`}
                 type="line"
                 filter={['==', ['get', 'dayNumber'], day.day_number]}
                 paint={{
                   'line-color': getDayColor(day.day_number),
                   'line-width': 4,
                   'line-opacity': selectedDay === null || selectedDay === day.day_number ? 0.8 : 0.2,
+                }}
+                layout={{
+                  'line-join': 'round',
+                  'line-cap': 'round',
+                }}
+              />
+            ))}
+          </Source>
+        )}
+
+        {/* Dashed route lines (estimated routes without polylines) */}
+        {dashedRouteGeoJSON && (
+          <Source id="dashed-routes" type="geojson" data={dashedRouteGeoJSON}>
+            {itinerary?.days.map((day) => (
+              <Layer
+                key={`dashed-route-${day.day_number}`}
+                id={`dashed-route-${day.day_number}`}
+                type="line"
+                filter={['==', ['get', 'dayNumber'], day.day_number]}
+                paint={{
+                  'line-color': getDayColor(day.day_number),
+                  'line-width': 3,
+                  'line-opacity': selectedDay === null || selectedDay === day.day_number ? 0.6 : 0.15,
+                  'line-dasharray': [2, 2],
                 }}
                 layout={{
                   'line-join': 'round',

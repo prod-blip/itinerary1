@@ -1,7 +1,7 @@
 # Project Status
 
-**Current Phase:** V0.1 Complete
-**Active Milestone:** V1 — Polished human-in-the-loop experience
+**Current Phase:** V1 Complete
+**Active Milestone:** V1.1 — PDF export + shareable links
 **Last Updated:** 2026-01-27
 
 ---
@@ -12,7 +12,7 @@
 |-----------|------|--------|
 | **V0** | End-to-end flow works once | ✅ Done |
 | **V0.1** | Day-wise map layers + route visualization | ✅ Done |
-| V1 | Polished human-in-the-loop experience | 🔲 Not Started |
+| **V1** | Polished human-in-the-loop experience | ✅ Done |
 | V1.1 | PDF export + shareable links | 🔲 Not Started |
 | V2 | Smarter clustering + opening hours | 🔲 Not Started |
 | V2.1 | Auth + saved trips | 🔲 Not Started |
@@ -44,10 +44,25 @@
 
 ---
 
+## V1 Checklist
+
+- [x] Toast notification system (Sonner)
+- [x] Generation progress indicator with animated stepper
+- [x] Route API error handling with warnings collection
+- [x] Dashed lines for estimated routes on map
+- [x] Location clustering by geographic proximity
+- [x] TSP route optimization (nearest neighbor algorithm)
+- [x] Route optimization badges in day headers
+- [x] Area labels support in day headers
+- [x] Frontend types updated for new schema fields
+
+---
+
 ## Progress Log
 
 | Date | Milestone | Update |
 |------|-----------|--------|
+| 2026-01-27 | V1 | ✅ Polished human-in-the-loop experience complete - Toast notifications, progress indicators, route optimization, clustering |
 | 2026-01-27 | V0.1 | ✅ Day-wise map layers + route visualization complete - Routes follow actual roads, floating day selector, mobile-responsive layout |
 | 2026-01-27 | V0 | ✅ MVP implementation complete - Full end-to-end flow working (intake → location discovery → editing → itinerary generation) |
 | — | V0 | Project specification completed |
@@ -56,11 +71,10 @@
 
 ## What's Next
 
-1. Improve location discovery with better clustering
-2. Add loading states for route fetching
-3. Handle route API errors more gracefully
-4. Add route optimization (TSP for multi-location days)
-5. Polish HITL editing experience with drag-to-reorder
+1. PDF export of itinerary
+2. Shareable trip links
+3. Advanced clustering with DBSCAN
+4. Opening hours integration
 
 ---
 

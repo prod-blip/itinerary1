@@ -60,9 +60,23 @@ function DayCard({ day }: { day: DayPlan }) {
       onClick={() => setSelectedDay(isSelected ? null : day.day_number)}
     >
       {/* Day header */}
-      <div className={`px-4 py-2 ${colors.bg} text-white flex items-center justify-between`}>
-        <span className="font-semibold">Day {day.day_number}</span>
-        <span className="text-sm opacity-90">{day.locations.length} places</span>
+      <div className={`px-4 py-2 ${colors.bg} text-white`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold">Day {day.day_number}</span>
+            {day.area_label && (
+              <span className="text-xs opacity-80">- {day.area_label}</span>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            {day.route_optimized && (
+              <span className="text-xs bg-white bg-opacity-20 px-2 py-0.5 rounded-full">
+                Route optimized
+              </span>
+            )}
+            <span className="text-sm opacity-90">{day.locations.length} places</span>
+          </div>
+        </div>
       </div>
 
       {/* Locations */}
@@ -78,9 +92,13 @@ function DayCard({ day }: { day: DayPlan }) {
                 {/* Travel time indicator */}
                 {index > 0 && travelTime && (
                   <div className="flex items-center gap-2 py-1 px-2">
-                    <div className={`w-0.5 h-4 ${colors.bg} opacity-30`}></div>
-                    <span className="text-xs text-gray-500">
+                    <div className={`w-0.5 h-4 ${colors.bg} ${travelTime.polyline ? 'opacity-30' : 'opacity-20'}`}
+                      style={!travelTime.polyline ? { backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, currentColor 2px, currentColor 4px)' } : undefined}
+                    ></div>
+                    <span className={`text-xs ${travelTime.polyline ? 'text-gray-500' : 'text-gray-400 italic'}`}>
+                      {!travelTime.polyline && '~'}
                       {formatDuration(travelTime.duration_minutes)} ({travelTime.distance_km.toFixed(1)} km)
+                      {!travelTime.polyline && ' est.'}
                     </span>
                   </div>
                 )}

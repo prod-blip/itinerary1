@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'next/navigation';
+import { toast } from 'sonner';
 import { useTripStore } from '@/stores/tripStore';
 import { useTripState, useGenerateItinerary } from '@/services/api';
 import LocationList from '@/components/LocationList';
 import ItineraryView from '@/components/ItineraryView';
 import MapView from '@/components/MapView';
+import GenerationProgress from '@/components/GenerationProgress';
 
 export default function TripPage() {
   const params = useParams();
@@ -25,6 +27,8 @@ export default function TripPage() {
 
   const { data: tripState, isLoading, error } = useTripState(threadId);
   const generateItineraryMutation = useGenerateItinerary();
+  const [generationStep, setGenerationStep] = useState<'organizing' | 'routing' | 'finishing'>('organizing');
+  const generationStartTime = useRef<number | null>(null);
 
   // Sync trip state from API to store
   useEffect(() => {
@@ -43,6 +47,20 @@ export default function TripPage() {
 
   const handleGenerateItinerary = async () => {
     setPhase('generating');
+    setGenerationStep('organizing');
+    generationStartTime.current = Date.now();
+
+    // Progress simulation based on elapsed time
+    const progressInterval = setInterval(() => {
+      if (!generationStartTime.current) return;
+      const elapsed = Date.now() - generationStartTime.current;
+      if (elapsed > 5000) {
+        setGenerationStep('finishing');
+      } else if (elapsed > 2000) {
+        setGenerationStep('routing');
+      }
+    }, 500);
+
     try {
       const result = await generateItineraryMutation.mutateAsync({
         threadId,
@@ -53,9 +71,21 @@ export default function TripPage() {
       });
       setItinerary(result.itinerary);
       setPhase('complete');
+
+      // Show warning if some routes failed
+      if (result.route_warnings && result.route_warnings.length > 0) {
+        toast.warning('Some routes could not be calculated', {
+          description: 'Travel times shown are estimates',
+        });
+      }
     } catch (err) {
       setPhase('editing');
-      console.error('Failed to generate itinerary:', err);
+      toast.error('Failed to generate itinerary', {
+        description: err instanceof Error ? err.message : 'Please try again',
+      });
+    } finally {
+      clearInterval(progressInterval);
+      generationStartTime.current = null;
     }
   };
 
@@ -156,20 +186,8 @@ export default function TripPage() {
         </div>
       )}
 
-      {/* Generating overlay */}
-      {phase === 'generating' && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-8 text-center max-w-sm">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Creating Your Itinerary
-            </h3>
-            <p className="text-gray-600">
-              Optimizing routes and organizing your days...
-            </p>
-          </div>
-        </div>
-      )}
+      {/* Generating overlay with progress */}
+      {phase === 'generating' && <GenerationProgress currentStep={generationStep} />}
     </div>
   );
 }
