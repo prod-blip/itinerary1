@@ -41,10 +41,10 @@ function StepIndicator({
       <div
         className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
           isComplete
-            ? 'bg-green-500 text-white'
+            ? 'bg-success-500 text-white'
             : isActive
-            ? 'bg-blue-600 text-white ring-4 ring-blue-100'
-            : 'bg-gray-200 text-gray-500'
+            ? 'bg-primary-600 dark:bg-primary-500 text-white ring-4 ring-primary-100 dark:ring-primary-900/50'
+            : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400'
         }`}
       >
         {isComplete ? <CheckIcon /> : index + 1}
@@ -54,13 +54,13 @@ function StepIndicator({
       <div className="flex-1">
         <div
           className={`font-medium text-sm ${
-            isActive ? 'text-gray-900' : isComplete ? 'text-gray-600' : 'text-gray-400'
+            isActive ? 'text-neutral-900 dark:text-neutral-100' : isComplete ? 'text-neutral-600 dark:text-neutral-400' : 'text-neutral-400 dark:text-neutral-500'
           }`}
         >
           {step.label}
         </div>
         {isActive && (
-          <div className="text-xs text-gray-500 mt-0.5 animate-pulse">{step.description}</div>
+          <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 animate-pulse">{step.description}</div>
         )}
       </div>
     </div>
@@ -71,9 +71,9 @@ export default function GenerationProgress({ currentStep }: GenerationProgressPr
   const currentIndex = STEPS.findIndex((s) => s.key === currentStep);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-8 max-w-sm w-full mx-4 shadow-2xl">
-        <h3 className="text-lg font-semibold text-gray-900 mb-6 text-center">
+    <div className="overlay-backdrop flex items-center justify-center z-50 animate-fade-in">
+      <div className="bg-white dark:bg-neutral-800 rounded-2xl p-8 max-w-sm w-full mx-4 shadow-2xl animate-scale-in">
+        <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-6 text-center">
           Creating Your Itinerary
         </h3>
 
@@ -91,14 +91,14 @@ export default function GenerationProgress({ currentStep }: GenerationProgressPr
         </div>
 
         {/* Progress bar */}
-        <div className="mt-6 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+        <div className="mt-6 h-1.5 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
           <div
-            className="h-full bg-blue-600 rounded-full transition-all duration-500 ease-out"
+            className="h-full bg-primary-600 dark:bg-primary-500 rounded-full transition-all duration-500 ease-out"
             style={{ width: `${((currentIndex + 1) / STEPS.length) * 100}%` }}
           />
         </div>
 
-        <p className="text-xs text-gray-400 text-center mt-4">
+        <p className="text-xs text-neutral-400 dark:text-neutral-500 text-center mt-4">
           This may take a moment...
         </p>
       </div>

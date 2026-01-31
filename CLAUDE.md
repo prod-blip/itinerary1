@@ -4,7 +4,7 @@
 
 Build a **map-first, agentic itinerary generator** where users discover locations on a map before generating day-wise itineraries. Geography before chronology.
 
-**Current Milestone:** V0 — Foundational MVP (end-to-end flow works once)
+**Current Milestone:** Read from Project Status file
 
 ---
 
@@ -14,6 +14,7 @@ Build a **map-first, agentic itinerary generator** where users discover location
 - [Architecture](docs/architecture.md) — System design and data flow
 - [Changelog](docs/changelog.md) — Version history
 - [Project Status](docs/project_status.md) — Current progress
+- [Design Principles](docs/design-principles.md) - Design Standards of the project
 
 Update docs after major milestones and additions.
 
@@ -70,40 +71,28 @@ travel-planner/
 
 ---
 
-## Design Style Guide
+## Visual Development & Testing
 
-**Tech stack:** Next.js (App Router), Tailwind CSS, MapLibre GL JS
+### Design System
 
-**Visual style:**
-- Clean, minimal interface — the map is the star
-- Muted color palette; bright accents only for CTAs and day-wise routes
-- No dark mode for MVP
+The project follows S-Tier SaaS design standards inspired by Stripe, Airbnb, and Linear. All UI development must adhere to:
 
-**Responsive design:**
-- Desktop-first for V0 (map takes 60%+ of viewport)
-- Mobile: stack layout — map on top, location list below
-- Breakpoints: `sm:640px`, `md:768px`, `lg:1024px`
-- Touch-friendly tap targets (min 44px) on mobile
+- **Design Principles**: [Design Principles](docs/design-principles.md) - Comprehensive checklist for world-class UI
+- **Component Library**: NextUI with custom Tailwind configuration
 
-**Component patterns:**
-- Tailwind for all styling — no separate CSS files
-- Keep components focused and small
-- Location cards: name + "why this fits you" + action
-- Day cards: sequential, expandable, color-coded
+### Quick Visual Check
 
-## Product & UX Guidelines
+**IMMEDIATELY after implementing any front-end change:**
 
-**Core UX principles:**
-- Geography before chronology — show map first, days second
-- Explain every suggestion — "why this fits you" builds trust
-- User edits before generation — no surprise itineraries
-- Minimal friction — remove is one click, no confirmation modals
+1. **Identify what changed** - Review the modified components/pages
+2. **Navigate to affected pages** - Use `mcp__playwright__browser_navigate` to visit each changed view
+3. **Verify design compliance** - Compare against `/context/design-principles.md`
+4. **Validate feature implementation** - Ensure the change fulfills the user's specific request
+5. **Check acceptance criteria** - Review any provided context files or requirements
+6. **Capture evidence** - Take full page screenshot at desktop viewport (1440px) of each changed view
+7. **Check for errors** - Run `mcp__playwright__browser_console_messages` ⚠️
 
-**Copy tone:**
-- Friendly, helpful, travel-excited
-- Brief labels and instructions
-- Actionable CTAs: "Generate Itinerary", "Add a Place"
-- Helpful error messages that suggest next steps
+This verification ensures changes meet design standards and user requirements.
 
 ---
 

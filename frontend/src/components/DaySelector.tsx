@@ -46,21 +46,17 @@ export default function DaySelector({
       <div
         ref={scrollContainerRef}
         className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide"
-        style={{
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-        }}
       >
         {/* All Days tab */}
         <button
           ref={selectedDay === null ? selectedButtonRef : null}
           onClick={() => onSelectDay(null)}
-          className={`flex-shrink-0 px-4 py-2.5 rounded-lg font-medium transition-all
+          className={`flex-shrink-0 px-4 py-2.5 rounded-lg font-medium transition-all duration-200
             min-h-[44px] min-w-[44px]
             ${
               selectedDay === null
-                ? 'bg-gray-900 text-white shadow-sm'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 shadow-sm'
+                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
             }`}
         >
           All Days
@@ -76,12 +72,12 @@ export default function DaySelector({
               key={dayNumber}
               ref={isSelected ? selectedButtonRef : null}
               onClick={() => onSelectDay(dayNumber)}
-              className={`flex-shrink-0 px-4 py-2.5 rounded-lg font-medium transition-all
+              className={`flex-shrink-0 px-4 py-2.5 rounded-lg font-medium transition-all duration-200
                 flex items-center gap-2 min-h-[44px] min-w-[44px]
                 ${
                   isSelected
                     ? 'text-white shadow-sm'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
                 }`}
               style={
                 isSelected
@@ -103,7 +99,7 @@ export default function DaySelector({
       </div>
 
       {/* Fade indicators for scroll */}
-      <div className="absolute top-0 right-0 h-full w-8 bg-gradient-to-l from-white to-transparent pointer-events-none" />
+      <div className="absolute top-0 right-0 h-full w-8 bg-gradient-to-l from-white dark:from-neutral-900 to-transparent pointer-events-none" />
     </div>
   );
 }

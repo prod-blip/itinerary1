@@ -27,15 +27,15 @@ export default function LocationCard({
   onMouseEnter,
   onMouseLeave,
 }: LocationCardProps) {
-  const markerColor = dayNumber ? getDayColor(dayNumber) : '#3B82F6';
+  const markerColor = dayNumber ? getDayColor(dayNumber) : '#6366f1';
 
   return (
     <div
-      className={`group relative p-4 bg-white border rounded-xl transition-all duration-200 cursor-pointer
+      className={`group relative p-4 bg-white dark:bg-neutral-800 border rounded-xl transition-all duration-200 cursor-pointer
         ${
           isHighlighted
-            ? 'border-blue-500 shadow-md ring-1 ring-blue-500'
-            : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
+            ? 'border-primary-500 dark:border-primary-400 shadow-md ring-1 ring-primary-500 dark:ring-primary-400'
+            : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600 hover:shadow-sm'
         }`}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
@@ -54,24 +54,24 @@ export default function LocationCard({
         <div className="flex-1 min-w-0 pr-6">
           {/* Name and badges */}
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="font-semibold text-gray-900 truncate">
+            <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 truncate">
               {location.name}
             </h3>
             {location.user_added && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
+              <span className="badge-warning">
                 Added by you
               </span>
             )}
           </div>
 
           {/* Why this fits you */}
-          <p className="mt-1.5 text-sm text-gray-600 line-clamp-2">
+          <p className="mt-1.5 text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2">
             {location.why_this_fits_you}
           </p>
 
           {/* User note if present */}
           {location.user_note && (
-            <p className="mt-2 text-xs text-gray-500 italic flex items-center gap-1">
+            <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-500 italic flex items-center gap-1">
               <svg
                 className="w-3.5 h-3.5 flex-shrink-0"
                 fill="none"
@@ -96,8 +96,8 @@ export default function LocationCard({
             e.stopPropagation();
             onRemove();
           }}
-          className="absolute top-3 right-3 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50
-            rounded-lg transition-all opacity-0 group-hover:opacity-100 focus:opacity-100
+          className="absolute top-3 right-3 p-2 text-neutral-400 dark:text-neutral-500 hover:text-error-500 dark:hover:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/30
+            rounded-lg transition-all duration-200 opacity-0 group-hover:opacity-100 focus:opacity-100
             min-w-[44px] min-h-[44px] flex items-center justify-center"
           title="Remove location"
           aria-label={`Remove ${location.name}`}
