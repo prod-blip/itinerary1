@@ -102,3 +102,4 @@ dmypy.json
 
 # Local development
 *.local
+.playwright-mcp/
