@@ -130,20 +130,20 @@ export const TRAVEL_STYLE_OPTIONS: {
   },
 ];
 
-// Day colors for map visualization
+// Day colors for map visualization (matches Tailwind day.* colors)
 export const DAY_COLORS = [
-  '#3B82F6', // blue
-  '#10B981', // green
-  '#F59E0B', // amber
-  '#EF4444', // red
-  '#8B5CF6', // purple
-  '#EC4899', // pink
-  '#06B6D4', // cyan
-  '#84CC16', // lime
-  '#F97316', // orange
-  '#6366F1', // indigo
-  '#14B8A6', // teal
-  '#A855F7', // violet
-  '#E11D48', // rose
-  '#0EA5E9', // sky
+  '#6366f1', // Indigo (primary) - Day 1
+  '#10b981', // Emerald - Day 2
+  '#f59e0b', // Amber - Day 3
+  '#ef4444', // Red - Day 4
+  '#8b5cf6', // Violet - Day 5
+  '#ec4899', // Pink - Day 6
+  '#06b6d4', // Cyan - Day 7
+  '#84cc16', // Lime - Day 8
+  '#f97316', // Orange - Day 9
+  '#14b8a6', // Teal - Day 10
+  '#a855f7', // Purple - Day 11
+  '#3b82f6', // Blue - Day 12
+  '#eab308', // Yellow - Day 13
+  '#64748b', // Slate - Day 14
 ];

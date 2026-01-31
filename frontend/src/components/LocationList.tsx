@@ -88,26 +88,26 @@ export default function LocationList({
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Discovering Places</h2>
+          <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">Discovering Places</h2>
         </div>
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="p-4 bg-white border border-gray-200 rounded-xl animate-pulse"
+              className="p-4 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl"
             >
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 bg-gray-200 rounded-full" />
+                <div className="w-8 h-8 skeleton rounded-full" />
                 <div className="flex-1">
-                  <div className="h-5 bg-gray-200 rounded w-3/4 mb-2" />
-                  <div className="h-4 bg-gray-100 rounded w-full" />
-                  <div className="h-4 bg-gray-100 rounded w-2/3 mt-1" />
+                  <div className="h-5 skeleton rounded w-3/4 mb-2" />
+                  <div className="h-4 skeleton rounded w-full" />
+                  <div className="h-4 skeleton rounded w-2/3 mt-1" />
                 </div>
               </div>
             </div>
           ))}
         </div>
-        <p className="text-sm text-gray-500 text-center">
+        <p className="text-sm text-neutral-500 dark:text-neutral-400 text-center">
           Finding amazing places for your trip...
         </p>
       </div>
@@ -118,9 +118,9 @@ export default function LocationList({
   if (locations.length === 0) {
     return (
       <div className="text-center py-12 px-4">
-        <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+        <div className="w-16 h-16 mx-auto mb-4 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center">
           <svg
-            className="w-8 h-8 text-gray-400"
+            className="w-8 h-8 text-neutral-400 dark:text-neutral-500"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -139,16 +139,15 @@ export default function LocationList({
             />
           </svg>
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
           No locations yet
         </h3>
-        <p className="text-gray-600 mb-6">
+        <p className="text-neutral-600 dark:text-neutral-400 mb-6">
           Add some places to get started!
         </p>
         <button
           onClick={() => setIsAddingPlace(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 text-white
-            rounded-lg hover:bg-blue-600 transition-colors font-medium"
+          className="btn-primary"
         >
           <svg
             className="w-5 h-5"
@@ -175,7 +174,7 @@ export default function LocationList({
             />
             <button
               onClick={() => setIsAddingPlace(false)}
-              className="mt-2 text-sm text-gray-500 hover:text-gray-700"
+              className="mt-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300"
             >
               Cancel
             </button>
@@ -189,16 +188,16 @@ export default function LocationList({
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-4 flex-shrink-0">
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
           Discovered Places
         </h2>
-        <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+        <span className="badge-neutral">
           {locations.length} {locations.length === 1 ? 'location' : 'locations'}
         </span>
       </div>
 
       {/* Location list - scrollable */}
-      <div className="flex-1 overflow-y-auto space-y-3 pb-4">
+      <div className="flex-1 overflow-y-auto space-y-3 pb-4 scrollbar-thin">
         {locations.map((location, index) => (
           <LocationCard
             key={location.id}
@@ -214,7 +213,7 @@ export default function LocationList({
       </div>
 
       {/* Actions footer */}
-      <div className="flex-shrink-0 pt-4 border-t border-gray-200 space-y-3">
+      <div className="flex-shrink-0 pt-4 border-t border-neutral-200 dark:border-neutral-700 space-y-3">
         {/* Add a place */}
         {isAddingPlace ? (
           <div className="space-y-2">
@@ -225,7 +224,7 @@ export default function LocationList({
             />
             <button
               onClick={() => setIsAddingPlace(false)}
-              className="w-full py-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              className="w-full py-2 text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors"
             >
               Cancel
             </button>
@@ -233,8 +232,9 @@ export default function LocationList({
         ) : (
           <button
             onClick={() => setIsAddingPlace(true)}
-            className="w-full py-3 px-4 border-2 border-dashed border-gray-300 rounded-lg
-              text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors
+            className="w-full py-3 px-4 border-2 border-dashed border-neutral-300 dark:border-neutral-600 rounded-lg
+              text-neutral-600 dark:text-neutral-400 hover:border-neutral-400 dark:hover:border-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300
+              transition-colors duration-200
               flex items-center justify-center gap-2 min-h-[48px]"
           >
             <svg
@@ -258,11 +258,11 @@ export default function LocationList({
         <button
           onClick={handleGenerateItinerary}
           disabled={locations.length === 0 || isGenerating}
-          className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-all min-h-[56px]
+          className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-200 min-h-[56px]
             ${
               locations.length === 0 || isGenerating
-                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                : 'bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700 shadow-sm hover:shadow'
+                ? 'bg-neutral-200 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-500 cursor-not-allowed'
+                : 'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 shadow-sm hover:shadow-primary'
             }`}
         >
           {isGenerating ? (
@@ -295,7 +295,7 @@ export default function LocationList({
         </button>
 
         {/* Helper text */}
-        <p className="text-xs text-gray-500 text-center">
+        <p className="text-xs text-neutral-500 dark:text-neutral-400 text-center">
           Remove places you do not want, add your favorites, then generate your itinerary.
         </p>
       </div>
