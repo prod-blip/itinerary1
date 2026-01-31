@@ -94,7 +94,7 @@ export default function TripPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-neutral-900 transition-colors">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-neutral-950 transition-colors">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 dark:border-primary-400 mx-auto mb-4" />
           <p className="text-neutral-600 dark:text-neutral-400">Loading your trip...</p>
@@ -105,7 +105,7 @@ export default function TripPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-neutral-900 transition-colors">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-neutral-950 transition-colors">
         <div className="text-center max-w-md">
           <div className="w-16 h-16 mx-auto mb-4 bg-error-100 dark:bg-error-900/30 rounded-full flex items-center justify-center">
             <svg className="w-8 h-8 text-error-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -140,7 +140,7 @@ export default function TripPage() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-neutral-50 dark:bg-neutral-900 transition-colors">
+    <div className="h-screen flex flex-col bg-neutral-50 dark:bg-neutral-950 transition-colors">
       {/* Header */}
       <header className="bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 px-4 py-3 flex-shrink-0">
         <div className="flex items-center justify-between">

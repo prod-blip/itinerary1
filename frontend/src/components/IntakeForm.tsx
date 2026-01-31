@@ -154,7 +154,7 @@ export default function IntakeForm() {
               onChange={handleDestinationChange}
               placeholder="Search for a city or region..."
               initialValue={formData.destination}
-              className={errors.destination ? 'ring-2 ring-error-500 dark:ring-error-400' : ''}
+              hasError={!!errors.destination}
             />
             {errors.destination && (
               <p className="mt-1 text-sm text-error-600 dark:text-error-400">{errors.destination}</p>
@@ -374,7 +374,7 @@ export default function IntakeForm() {
               ${
                 isPending
                   ? 'bg-neutral-300 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400 cursor-not-allowed'
-                  : 'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 shadow-sm hover:shadow-primary'
+                  : 'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 active:scale-[0.98] shadow-sm hover:shadow-primary'
               }`}
           >
             {isPending ? (

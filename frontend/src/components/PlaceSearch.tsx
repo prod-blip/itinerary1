@@ -11,6 +11,7 @@ interface PlaceSearchProps {
   className?: string;
   initialValue?: string;
   autoFocus?: boolean;
+  hasError?: boolean;
 }
 
 export default function PlaceSearch({
@@ -20,6 +21,7 @@ export default function PlaceSearch({
   className = '',
   initialValue = '',
   autoFocus = false,
+  hasError = false,
 }: PlaceSearchProps) {
   const [inputValue, setInputValue] = useState(initialValue);
   const [debouncedInput, setDebouncedInput] = useState('');
@@ -148,14 +150,17 @@ export default function PlaceSearch({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           autoFocus={autoFocus}
-          className={`w-full pl-12 pr-4 py-3 border rounded-lg
+          className={`w-full pl-12 pr-4 py-3 border-2 rounded-lg
             bg-white dark:bg-neutral-800
-            border-neutral-200 dark:border-neutral-700
             text-neutral-900 dark:text-neutral-100
             placeholder:text-neutral-400 dark:placeholder:text-neutral-500
-            focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-primary-500 dark:focus:border-primary-400
+            focus:ring-2 focus:ring-primary-500/20 dark:focus:ring-primary-400/20 focus:border-primary-500 dark:focus:border-primary-400
             hover:border-neutral-300 dark:hover:border-neutral-600
-            transition-all duration-200 ${className}`}
+            transition-all duration-200
+            ${hasError
+              ? 'border-error-500 dark:border-error-400 focus:border-error-500 dark:focus:border-error-400 focus:ring-error-500/20 dark:focus:ring-error-400/20'
+              : 'border-neutral-200 dark:border-neutral-700'
+            } ${className}`}
         />
         {isLoading && (
           <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
