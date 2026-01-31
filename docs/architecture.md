@@ -38,6 +38,9 @@ This document describes the system design, application structure, and how major 
 - `PlaceSearch.tsx` — Google Places autocomplete for adding custom locations
 - `ItineraryView.tsx` — Day-wise itinerary display container
 - `DayCard.tsx` — Single day's locations with travel times
+- `DaySelector.tsx` — Day selection component for itinerary view
+- `GenerationProgress.tsx` — Animated progress overlay during itinerary generation
+- `ThemeToggle.tsx` — Theme provider and toggle button for light/dark/system mode switching
 
 ### State Management
 
@@ -169,4 +172,20 @@ This approach minimizes API costs (1 call per day vs. N-1 calls per day for segm
 
 ---
 
-*Last updated: 2026-01-27 (V0.1 route visualization)*
+---
+
+## Design System Architecture
+
+The application uses a comprehensive design system with Tailwind CSS and CSS custom properties:
+
+1. **Design Tokens:** Defined in `tailwind.config.ts` with primary indigo palette, neutral slate tones, semantic colors, typography scale, spacing units, border radii, shadows, and animations
+2. **CSS Variables:** Light and dark mode color variables in `globals.css` for semantic theme switching (backgrounds, text, borders, brand colors)
+3. **Component Classes:** Reusable utility classes (`.btn-*`, `.input`, `.card`, `.badge-*`) in `@layer components` for consistent styling
+4. **Theme Management:** `ThemeProvider` context manages theme state (light/dark/system) with localStorage persistence and system preference detection
+5. **Dark Mode:** Tailwind's `darkMode: 'class'` strategy with `.dark` class applied to `<html>` element based on theme selection
+
+This architecture ensures consistent visual design, seamless theme switching, and maintainable styling across all components.
+
+---
+
+*Last updated: 2026-01-31 (V1.1 design system)*

@@ -1,8 +1,8 @@
 # Project Status
 
-**Current Phase:** V1 Complete
-**Active Milestone:** V1.1 — PDF export + shareable links
-**Last Updated:** 2026-01-27
+**Current Phase:** V1.1 In Progress
+**Active Milestone:** V1.1 — Design system + PDF export + shareable links
+**Last Updated:** 2026-01-31
 
 ---
 
@@ -13,7 +13,7 @@
 | **V0** | End-to-end flow works once | ✅ Done |
 | **V0.1** | Day-wise map layers + route visualization | ✅ Done |
 | **V1** | Polished human-in-the-loop experience | ✅ Done |
-| V1.1 | PDF export + shareable links | 🔲 Not Started |
+| **V1.1** | Design system + PDF export + shareable links | 🟡 In Progress |
 | V2 | Smarter clustering + opening hours | 🔲 Not Started |
 | V2.1 | Auth + saved trips | 🔲 Not Started |
 | V3 | Multi-city + collaboration | 🔲 Not Started |
@@ -58,10 +58,24 @@
 
 ---
 
+## V1.1 Checklist
+
+- [x] S-Tier design system with comprehensive design tokens
+- [x] Dark mode support with ThemeProvider
+- [x] Theme toggle component (light/dark/system)
+- [x] CSS component classes (btn, input, card, badge)
+- [x] All components updated with new design system
+- [x] Design principles documentation
+- [ ] PDF export of itinerary
+- [ ] Shareable trip links
+
+---
+
 ## Progress Log
 
 | Date | Milestone | Update |
 |------|-----------|--------|
+| 2026-01-31 | V1.1 | 🟡 Design system implementation complete - S-Tier design tokens, dark mode, theme toggle, component classes, all components updated |
 | 2026-01-27 | V1 | ✅ Polished human-in-the-loop experience complete - Toast notifications, progress indicators, route optimization, clustering |
 | 2026-01-27 | V0.1 | ✅ Day-wise map layers + route visualization complete - Routes follow actual roads, floating day selector, mobile-responsive layout |
 | 2026-01-27 | V0 | ✅ MVP implementation complete - Full end-to-end flow working (intake → location discovery → editing → itinerary generation) |

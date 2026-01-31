@@ -11,6 +11,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2026-01-31
+
+### Added
+
+- **S-Tier design system:** Comprehensive design tokens inspired by Stripe, Airbnb, and Linear (colors, typography, spacing, shadows, animations)
+- **Dark mode support:** Full dark mode implementation with system preference detection and manual toggle
+- **ThemeProvider component:** React context-based theme management with localStorage persistence
+- **Theme toggle button:** Cycles through light → dark → system modes with sun/moon icons
+- **Design tokens in Tailwind config:** Primary indigo palette (50-950), neutral slate tones, semantic colors (success, warning, error, info), 14 day colors for itinerary visualization
+- **CSS component classes:** Reusable `.btn-*`, `.input`, `.card`, `.badge-*` classes with consistent hover/focus states
+- **CSS variables for theming:** Light and dark mode color variables in globals.css for seamless theme transitions
+- **Custom animations:** fade-in, fade-up, scale-in, shimmer, and other micro-interactions
+- **Design principles documentation:** Comprehensive design checklist in `docs/design-principles.md`
+
+### Changed
+
+- Updated all 9 components with new design system colors (IntakeForm, PlaceSearch, LocationList, LocationCard, ItineraryView, MapView, GenerationProgress, DaySelector, MapDaySelector)
+- Migrated from `gray-*` to `neutral-*` color naming throughout codebase
+- Enhanced CLAUDE.md with Visual Development & Testing section
+- Updated day colors in types/index.ts to match Tailwind config
+- Layout.tsx now uses ThemeProvider wrapper
+- Home page and trip page include theme toggle in header
+
+### Dependencies
+
+- Added custom Tailwind animation utilities (fade-in, fade-up, scale-in, shimmer)
+- Extended Tailwind with custom box shadows including primary-colored shadows
+
+---
+
 ## [1.0.0] - 2026-01-27
 
 ### Added
