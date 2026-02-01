@@ -66,6 +66,13 @@
 - [x] CSS component classes (btn, input, card, badge)
 - [x] All components updated with new design system
 - [x] Design principles documentation
+- [x] Value-first landing page redesign with hero section
+- [x] Glassmorphism design system (glass, glass-strong utilities)
+- [x] MapBackground component with blurred map overlay
+- [x] HeroMockup component showing product preview
+- [x] Bento card redesign for LocationCard with thumbnails
+- [x] PlaceImage component with loading states
+- [x] Enhanced animations (hero-float, skeleton-shimmer, stagger)
 - [ ] PDF export of itinerary
 - [ ] Shareable trip links
 
@@ -75,6 +82,7 @@
 
 | Date | Milestone | Update |
 |------|-----------|--------|
+| 2026-02-01 | V1.1 | 🟡 Landing page redesign complete - Value-first hero section, glassmorphism, map background, Bento cards, product mockup, enhanced animations |
 | 2026-01-31 | V1.1 | 🟡 Design system implementation complete - S-Tier design tokens, dark mode, theme toggle, component classes, all components updated |
 | 2026-01-27 | V1 | ✅ Polished human-in-the-loop experience complete - Toast notifications, progress indicators, route optimization, clustering |
 | 2026-01-27 | V0.1 | ✅ Day-wise map layers + route visualization complete - Routes follow actual roads, floating day selector, mobile-responsive layout |

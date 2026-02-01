@@ -130,17 +130,8 @@ export default function IntakeForm() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="card p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-50 mb-2">
-            Plan Your Adventure
-          </h1>
-          <p className="text-neutral-600 dark:text-neutral-400">
-            Tell us about your trip and we will discover amazing places for you.
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="glass-card rounded-2xl p-6 sm:p-8 shadow-xl">
+        <form onSubmit={handleSubmit} className="space-y-7">
           {/* Destination */}
           <div>
             <label

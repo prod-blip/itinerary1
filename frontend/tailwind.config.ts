@@ -221,6 +221,18 @@ const config: Config = {
           '0%': { transform: 'rotate(0deg)' },
           '100%': { transform: 'rotate(360deg)' },
         },
+        'hero-float': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-12px)' },
+        },
+        'skeleton-shimmer': {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+        'stagger-fade-up': {
+          '0%': { opacity: '0', transform: 'translateY(16px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
       },
       animation: {
         'fade-in': 'fade-in 0.2s ease-out',
@@ -231,6 +243,9 @@ const config: Config = {
         'shimmer': 'shimmer 2s infinite linear',
         'pulse-subtle': 'pulse-subtle 2s infinite ease-in-out',
         'spin-slow': 'spin-slow 3s linear infinite',
+        'hero-float': 'hero-float 6s ease-in-out infinite',
+        'skeleton-shimmer': 'skeleton-shimmer 1.5s infinite linear',
+        'stagger-fade-up': 'stagger-fade-up 0.4s ease-out forwards',
       },
       // Backdrop blur
       backdropBlur: {
