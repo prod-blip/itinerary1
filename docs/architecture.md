@@ -66,18 +66,25 @@ This document describes the system design, application structure, and how major 
 
 #### Agent Layer (`app/agent/`)
 - `graph.py` — LangGraph definition and compilation with MemorySaver
+  - Routes discovery completion to `itinerary_generator` (not END) to enable HITL pause
 - `nodes.py` — Node functions:
   - `location_discovery_node` — Generates candidate locations using Places API + Tavily
+    - Uses gpt-4o for tool orchestration, gpt-4o-mini for final summarization
+    - Detects completion phase and switches models automatically
+  - `tool_executor_node` — Executes tool calls in parallel using asyncio.gather()
+    - Trims place details to essential fields only (reduces token count ~50%)
   - `itinerary_generator_node` — Creates day-wise plan using Distance API
   - `validation_node` — Sanity-checks the itinerary
 - `state.py` — `TravelPlannerState` TypedDict definition
 - `tools.py` — Tool definitions:
   - `search_places` — Google Places text search
-  - `get_place_details` — Google Places detail lookup
+  - `get_place_details` — Google Places detail lookup (trimmed output)
   - `tavily_search` — Web search for local insights
   - `get_travel_time` — Point-to-point travel time
   - `get_distance_matrix` — All-pairs travel times
 - `prompts.py` — Prompt templates for each node
+  - `LOCATION_DISCOVERY_PROMPT` — Condensed discovery instructions
+  - `LOCATION_SUMMARY_PROMPT` — Summarization prompt with "one sentence" constraint
 
 #### Services Layer (`app/services/`)
 - `google_maps.py` — Google Maps API client wrapper
@@ -140,9 +147,10 @@ This document describes the system design, application structure, and how major 
 | Google Places API | Location search, autocomplete, details | Location Discovery node, PlaceSearch component |
 | Google Directions API | Route polylines, travel times, distances | Itinerary enrichment (`_enrich_itinerary_with_routes`) |
 | Tavily API | Web search for local insights | Location Discovery node |
-| OpenAI GPT-4o | LLM reasoning | All agent nodes |
+| OpenAI GPT-4o | LLM reasoning for tool orchestration | Location Discovery node (discovery phase), Itinerary Generator node |
+| OpenAI GPT-4o-mini | Fast LLM for summarization | Location Discovery node (final summary phase) |
 | OpenStreetMap | Map tiles | MapView component |
-| Phoenix (Arize) | Observability/tracing | Agent layer |
+| Phoenix (Arize) | Observability/tracing with OpenTelemetry | Agent layer (LangChain auto-instrumentation) |
 
 ---
 
@@ -188,4 +196,19 @@ This architecture ensures consistent visual design, seamless theme switching, an
 
 ---
 
-*Last updated: 2026-01-31 (V1.1 design system)*
+## Performance Optimizations
+
+The agent layer has been optimized for latency:
+
+1. **Parallel Tool Execution:** Tool calls execute concurrently using `asyncio.gather()` instead of sequentially (reduces get_place_details batch from ~8s to ~1-2s)
+2. **Model Switching:** Location discovery uses gpt-4o for tool orchestration, automatically switches to gpt-4o-mini for final JSON summarization (reduces final step from ~8-9s to ~2-3s)
+3. **Token Reduction:**
+   - Place details trimmed to essential fields only (name, address, lat/lng, rating, types, summary)
+   - Discovery prompts condensed
+   - Summary prompt enforces "one sentence" constraint for descriptions
+   - Combined token reduction ~50% for input, ~40% for output
+4. **Overall Impact:** Discovery phase latency reduced from ~36s to ~15-20s
+
+---
+
+*Last updated: 2026-02-08 (V1.2.1 performance optimizations + Phoenix integration)*

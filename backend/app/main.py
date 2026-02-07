@@ -5,10 +5,14 @@ from typing import AsyncGenerator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from dotenv import load_dotenv
+from phoenix.otel import register
 from app.config import settings
 from app.api.routes import router
+from openinference.instrumentation.langchain import LangChainInstrumentor
+import os
 
+load_dotenv()
 
 def setup_tracing() -> None:
     """
@@ -21,8 +25,14 @@ def setup_tracing() -> None:
         from opentelemetry.sdk.trace import TracerProvider
 
         # Set up basic tracer provider
-        tracer_provider = TracerProvider()
-        trace.set_tracer_provider(tracer_provider)
+        tracer_provider = register(
+            endpoint=os.getenv("PHOENIX_COLLECTOR_ENDPOINT"),
+            api_key=os.getenv("PHOENIX_API_KEY"),
+            project_name="itinerary-creator",
+            auto_instrument=True,
+        )
+        LangChainInstrumentor().instrument(tracer_provider=tracer_provider)
+        tracer = trace.get_tracer(__name__)
 
         print("OpenTelemetry tracing initialized")
     except ImportError:

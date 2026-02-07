@@ -11,6 +11,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.1] - 2026-02-08
+
+### Fixed
+
+- **LangGraph infinite loop bug:** Graph now routes from location discovery to itinerary_generator instead of END, preventing infinite restart loop when re-invoked
+- Discovery phase now properly transitions to HITL pause point before itinerary generation
+
+### Changed
+
+- **Parallel tool execution:** Tool calls now execute concurrently using asyncio.gather() instead of sequentially (~6-7s saved, 8 sequential get_place_details → parallel)
+- **GPT-4o-mini for summarization:** Final location summary uses gpt-4o-mini instead of gpt-4o (~8-9s → ~2-3s for final output generation)
+- **Trimmed place details:** Tool results now exclude reviews, opening_hours, website, and phone fields - only essential data retained (reduces input tokens ~50%)
+- **Condensed prompts:** Discovery prompt shortened, new summary prompt added with "one sentence" requirement for why_this_fits_you (reduces output tokens)
+- **Discovery latency improvement:** Overall discovery phase reduced from ~36s to ~15-20s
+- **Phoenix instrumentation:** Integrated arize-phoenix-otel with project-specific endpoint, API key configuration, and LangChain auto-instrumentation
+- **Environment configuration:** Backend .env path now resolved relative to backend directory for reliable loading across different working directories
+
+### Dependencies
+
+- Updated `opentelemetry-api` from 1.27.0 to 1.39.1
+- Updated `opentelemetry-sdk` from 1.27.0 to 1.39.1
+- Added `arize-phoenix-otel==0.14.0` for Phoenix observability integration
+- Added `openinference-instrumentation-langchain==0.1.58` for LangChain tracing
+- Added `python-dotenv` for environment variable loading in main.py
+
+---
+
 ## [1.2.0] - 2026-02-01
 
 ### Added

@@ -2,7 +2,7 @@
 
 **Current Phase:** V1.1 In Progress
 **Active Milestone:** V1.1 — Design system + PDF export + shareable links
-**Last Updated:** 2026-01-31
+**Last Updated:** 2026-02-08
 
 ---
 
@@ -82,6 +82,7 @@
 
 | Date | Milestone | Update |
 |------|-----------|--------|
+| 2026-02-08 | V1.2.1 | ✅ Performance optimizations + bug fixes - Discovery latency reduced 36s→15-20s via parallel tools, GPT-4o-mini summarization, token reduction; Fixed LangGraph infinite loop bug; Phoenix observability integrated |
 | 2026-02-01 | V1.1 | 🟡 Landing page redesign complete - Value-first hero section, glassmorphism, map background, Bento cards, product mockup, enhanced animations |
 | 2026-01-31 | V1.1 | 🟡 Design system implementation complete - S-Tier design tokens, dark mode, theme toggle, component classes, all components updated |
 | 2026-01-27 | V1 | ✅ Polished human-in-the-loop experience complete - Toast notifications, progress indicators, route optimization, clustering |

@@ -20,6 +20,8 @@ polyline==2.0.2
 # Tavily search
 tavily-python==0.5.0
 
-# Observability (optional)
-opentelemetry-api==1.27.0
-opentelemetry-sdk==1.27.0
+# Observability (Phoenix)
+opentelemetry-api==1.39.1
+opentelemetry-sdk==1.39.1
+arize-phoenix-otel==0.14.0
+openinference-instrumentation-langchain==0.1.58
