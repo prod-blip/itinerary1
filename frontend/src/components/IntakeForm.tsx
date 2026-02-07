@@ -99,10 +99,9 @@ export default function IntakeForm() {
 
   const handleDaysChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
-    if (!isNaN(value)) {
-      setFormData((prev) => ({ ...prev, num_days: Math.min(14, Math.max(1, value)) }));
-      setErrors((prev) => ({ ...prev, num_days: undefined }));
-    }
+    const numDays = isNaN(value) || value < 1 ? 1 : Math.min(14, value);
+    setFormData((prev) => ({ ...prev, num_days: numDays }));
+    setErrors((prev) => ({ ...prev, num_days: undefined }));
   };
 
   const handleStyleChange = (style: TravelStyle) => {
