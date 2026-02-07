@@ -346,7 +346,7 @@ export default function MapView({
               anchor="bottom"
             >
               <NumberedMarker
-                number={meta ? meta.order : '?'}
+                number={meta ? meta.order : visibleLocations.indexOf(location) + 1}
                 color={dayColor}
                 isHighlighted={isHighlighted}
                 isUserAdded={location.user_added}
