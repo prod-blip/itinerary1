@@ -2,6 +2,7 @@
 
 import { Itinerary, DayPlan, DAY_COLORS } from '@/types';
 import { useTripStore } from '@/stores/tripStore';
+import PlaceImage from './PlaceImage';
 
 interface ItineraryViewProps {
   itinerary: Itinerary;
@@ -30,29 +31,29 @@ function DayCard({ day }: { day: DayPlan }) {
 
   return (
     <div
-      className={`rounded-xl border-2 overflow-hidden transition-all duration-200 cursor-pointer ${
+      className={`glass-card rounded-2xl overflow-hidden transition-all duration-200 cursor-pointer ${
         isSelected
-          ? 'shadow-md'
-          : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600'
+          ? 'shadow-lg'
+          : 'hover:shadow-card-hover'
       }`}
-      style={isSelected ? { borderColor: color } : undefined}
+      style={isSelected ? { boxShadow: `0 8px 25px -5px ${color}30` } : undefined}
       onClick={() => setSelectedDay(isSelected ? null : day.day_number)}
     >
       {/* Day header */}
       <div
-        className="px-4 py-2 text-white"
+        className="px-4 py-3 text-white"
         style={{ backgroundColor: color }}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="font-semibold">Day {day.day_number}</span>
             {day.area_label && (
-              <span className="text-xs opacity-80">- {day.area_label}</span>
+              <span className="text-sm opacity-80">- {day.area_label}</span>
             )}
           </div>
           <div className="flex items-center gap-2">
             {day.route_optimized && (
-              <span className="text-xs bg-white bg-opacity-20 px-2 py-0.5 rounded-full">
+              <span className="text-xs bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded-full">
                 Route optimized
               </span>
             )}
@@ -63,8 +64,8 @@ function DayCard({ day }: { day: DayPlan }) {
 
       {/* Locations */}
       <div
-        className={`p-3 ${isSelected ? 'bg-opacity-10' : 'bg-white dark:bg-neutral-800'}`}
-        style={isSelected ? { backgroundColor: `${color}15` } : undefined}
+        className={`p-3 transition-colors duration-200 ${isSelected ? '' : 'bg-white/50 dark:bg-neutral-800/50'}`}
+        style={isSelected ? { backgroundColor: `${color}08` } : undefined}
       >
         <div className="space-y-2">
           {day.locations.map((location, index) => {
@@ -73,17 +74,19 @@ function DayCard({ day }: { day: DayPlan }) {
             );
 
             return (
-              <div key={location.id}>
+              <div
+                key={location.id}
+                className="opacity-0 animate-stagger-fade-up"
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
                 {/* Travel time indicator */}
                 {index > 0 && travelTime && (
                   <div className="flex items-center gap-2 py-1 px-2">
                     <div
-                      className={`w-0.5 h-4 ${travelTime.polyline ? 'opacity-30' : 'opacity-20'}`}
+                      className="w-0.5 h-4 rounded-full"
                       style={{
                         backgroundColor: color,
-                        backgroundImage: !travelTime.polyline
-                          ? 'repeating-linear-gradient(0deg, transparent, transparent 2px, currentColor 2px, currentColor 4px)'
-                          : undefined,
+                        opacity: travelTime.polyline ? 0.4 : 0.2,
                       }}
                     />
                     <span className={`text-xs ${travelTime.polyline ? 'text-neutral-500 dark:text-neutral-400' : 'text-neutral-400 dark:text-neutral-500 italic'}`}>
@@ -94,18 +97,29 @@ function DayCard({ day }: { day: DayPlan }) {
                   </div>
                 )}
 
-                {/* Location */}
+                {/* Location with thumbnail */}
                 <div
-                  className="flex items-start gap-3 p-2 rounded-lg hover:bg-white dark:hover:bg-neutral-700 hover:shadow-sm transition-all duration-150"
+                  className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/80 dark:hover:bg-neutral-700/80 backdrop-blur-sm hover:shadow-sm transition-all duration-150"
                   onMouseEnter={() => setHighlightedLocation(location.id)}
                   onMouseLeave={() => setHighlightedLocation(null)}
                 >
+                  {/* Mini thumbnail */}
+                  <PlaceImage
+                    photoReference={location.photo_reference}
+                    placeName={location.name}
+                    size="sm"
+                    className="flex-shrink-0"
+                  />
+
+                  {/* Number badge */}
                   <div
-                    className="flex-shrink-0 w-6 h-6 rounded-full text-white text-xs flex items-center justify-center font-medium"
+                    className="flex-shrink-0 w-6 h-6 rounded-full text-white text-xs flex items-center justify-center font-medium shadow-sm"
                     style={{ backgroundColor: color }}
                   >
                     {index + 1}
                   </div>
+
+                  {/* Content */}
                   <div className="flex-1 min-w-0">
                     <h4 className="font-medium text-neutral-900 dark:text-neutral-100 text-sm truncate">
                       {location.name}
@@ -133,7 +147,7 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
         <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">Your Itinerary</h2>
         <button
           onClick={() => setSelectedDay(null)}
-          className={`text-sm px-3 py-1 rounded-full transition-colors duration-200 ${
+          className={`text-sm px-3 py-1.5 rounded-full transition-all duration-200 ${
             selectedDay === null
               ? 'bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900'
               : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
@@ -145,15 +159,15 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
 
       {/* Summary stats */}
       <div className="grid grid-cols-3 gap-3 mb-4">
-        <div className="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-3 text-center">
+        <div className="glass-card rounded-xl p-3 text-center">
           <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{itinerary.days.length}</div>
           <div className="text-xs text-neutral-500 dark:text-neutral-400">Days</div>
         </div>
-        <div className="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-3 text-center">
+        <div className="glass-card rounded-xl p-3 text-center">
           <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{itinerary.total_locations}</div>
           <div className="text-xs text-neutral-500 dark:text-neutral-400">Places</div>
         </div>
-        <div className="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-3 text-center">
+        <div className="glass-card rounded-xl p-3 text-center">
           <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
             {itinerary.days.reduce((sum, day) =>
               sum + day.travel_times.reduce((tSum, t) => tSum + t.duration_minutes, 0), 0
@@ -165,7 +179,7 @@ export default function ItineraryView({ itinerary }: ItineraryViewProps) {
 
       {/* Validation notes */}
       {itinerary.validation_notes.length > 0 && (
-        <div className="bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg p-3 mb-4">
+        <div className="glass-card bg-warning-50/80 dark:bg-warning-900/20 border-warning-200 dark:border-warning-800 rounded-xl p-3 mb-4">
           <h4 className="text-sm font-medium text-warning-800 dark:text-warning-200 mb-1">Notes</h4>
           <ul className="text-xs text-warning-700 dark:text-warning-300 space-y-1">
             {itinerary.validation_notes.map((note, index) => (

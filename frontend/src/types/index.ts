@@ -20,6 +20,7 @@ export interface Location {
   lng: number;
   why_this_fits_you: string;
   place_id?: string;
+  photo_reference?: string;
   user_added: boolean;
   user_note?: string;
 }

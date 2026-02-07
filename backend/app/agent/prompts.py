@@ -2,31 +2,28 @@
 Prompt templates for the Travel Planner agent nodes.
 """
 
-LOCATION_DISCOVERY_PROMPT = """You are a travel planning assistant helping discover locations for a trip.
-
-Based on the user's trip parameters, use the available tools to find relevant locations.
+LOCATION_DISCOVERY_PROMPT = """You are a travel planning assistant. Find locations for a trip using the available tools.
 
 Trip Parameters:
 - Destination: {destination}
-- Number of Days: {num_days}
-- Travel Style: {travel_style}
+- Days: {num_days} | Style: {travel_style}
 - Interests: {interests}
 - Constraints: {constraints}
-- Additional Notes: {notes}
+- Notes: {notes}
 
-Your task:
-1. Search for places matching the user's interests using the search_places tool
-2. Get details for promising places using the get_place_details tool
-3. Use tavily_search to find local insights and hidden gems
-4. Return a curated list of {num_locations} locations with explanations
+Steps:
+1. Use search_places to find places matching interests
+2. Use get_place_details for promising places
+3. Use tavily_search for local insights
 
-For each location, provide:
-- Why it fits the user's interests (personalized explanation)
-- Best time to visit if relevant
+Find {num_locations} quality locations that match the user's interests."""
 
-Focus on quality over quantity. Each location should genuinely match the user's preferences.
 
-When you have gathered enough information, respond with a JSON array of locations in this format:
+LOCATION_SUMMARY_PROMPT = """Based on the place details gathered, output a JSON array of {num_locations} locations for a trip to {destination}.
+
+User interests: {interests}
+
+Return ONLY a JSON array in this exact format (no other text):
 ```json
 [
   {{
@@ -34,12 +31,12 @@ When you have gathered enough information, respond with a JSON array of location
     "place_id": "google_place_id",
     "lat": 12.345,
     "lng": 67.890,
-    "why_this_fits_you": "Personalized explanation of why this location matches the user's interests..."
+    "why_this_fits_you": "One sentence why this fits the user."
   }}
 ]
 ```
 
-Aim for {num_locations} locations that span the user's interests and provide a well-rounded trip experience."""
+Keep "why_this_fits_you" to ONE short sentence. Include all locations from the place details."""
 
 
 ITINERARY_GENERATOR_PROMPT = """You are a travel itinerary optimizer. Given a list of approved locations and the trip duration, create an optimal day-by-day itinerary.

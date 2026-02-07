@@ -1,6 +1,7 @@
 """
 Node functions for the Travel Planner LangGraph.
 """
+import asyncio
 import json
 import uuid
 from typing import Any
@@ -12,16 +13,17 @@ from ..config import settings
 from .state import TravelPlannerState
 from .prompts import (
     LOCATION_DISCOVERY_PROMPT,
+    LOCATION_SUMMARY_PROMPT,
     ITINERARY_GENERATOR_PROMPT,
     VALIDATION_SYSTEM_PROMPT,
 )
 from .tools import LOCATION_DISCOVERY_TOOLS, ITINERARY_TOOLS
 
 
-def _get_llm() -> ChatOpenAI:
+def _get_llm(model: str = "gpt-4o") -> ChatOpenAI:
     """Get the ChatOpenAI instance for agent operations."""
     return ChatOpenAI(
-        model="gpt-4o",
+        model=model,
         temperature=0.7,
         api_key=settings.OPENAI_API_KEY,
     )
@@ -74,17 +76,28 @@ def _parse_itinerary_from_response(content: str) -> dict | None:
     return None
 
 
+def _has_place_details_in_messages(messages: list) -> bool:
+    """Check if we already have place details results in the message history."""
+    for msg in messages:
+        if isinstance(msg, ToolMessage):
+            content = msg.content
+            # Check if this looks like a place details result
+            if '"lat":' in content and '"lng":' in content and '"name":' in content:
+                return True
+    return False
+
+
 async def location_discovery_node(state: TravelPlannerState) -> dict[str, Any]:
     """
     Discovers locations using LLM with tools.
 
     This node uses the LLM to search for and gather information about
     locations that match the user's trip parameters.
-    """
-    llm = _get_llm()
-    llm_with_tools = llm.bind_tools(LOCATION_DISCOVERY_TOOLS)
 
+    Uses gpt-4o for tool orchestration, gpt-4o-mini for final summarization.
+    """
     trip_params = state.get("trip_params", {}) or {}
+    messages = list(state.get("messages", []))
 
     # Calculate target number of locations based on days and travel style
     num_days = trip_params.get("num_days", 3)
@@ -92,30 +105,50 @@ async def location_discovery_node(state: TravelPlannerState) -> dict[str, Any]:
     style_multiplier = {"relaxed": 2.5, "balanced": 3.5, "packed": 4.5}
     num_locations = min(20, max(8, int(num_days * style_multiplier.get(travel_style, 3.5))))
 
-    # Format the system prompt with trip parameters
-    system_prompt = LOCATION_DISCOVERY_PROMPT.format(
-        destination=trip_params.get("destination", "Unknown"),
-        num_days=num_days,
-        travel_style=travel_style,
-        interests=", ".join(trip_params.get("interests", [])),
-        constraints=", ".join(trip_params.get("constraints", [])) or "None",
-        notes=trip_params.get("additional_notes", "None provided"),
-        num_locations=num_locations,
-    )
+    # Check if we already have place details - if so, use mini for summarization
+    has_details = _has_place_details_in_messages(messages)
 
-    messages = list(state.get("messages", []))
+    if has_details:
+        # Final summarization phase - use gpt-4o-mini with summary prompt
+        llm = _get_llm(model="gpt-4o-mini")
 
-    # If this is the first call, add the system message
-    if not messages or not any(isinstance(m, SystemMessage) for m in messages):
-        messages.insert(0, SystemMessage(content=system_prompt))
+        summary_prompt = LOCATION_SUMMARY_PROMPT.format(
+            destination=trip_params.get("destination", "Unknown"),
+            interests=", ".join(trip_params.get("interests", [])),
+            num_locations=num_locations,
+        )
 
-        # Add initial human message to start the conversation
-        messages.append(HumanMessage(
-            content=f"Please find {num_locations} great locations for my trip to {trip_params.get('destination', 'the destination')}."
-        ))
+        # Replace system message with summary prompt
+        messages = [msg for msg in messages if not isinstance(msg, SystemMessage)]
+        messages.insert(0, SystemMessage(content=summary_prompt))
 
-    # Invoke the LLM
-    response = await llm_with_tools.ainvoke(messages)
+        response = await llm.ainvoke(messages)
+    else:
+        # Discovery phase - use gpt-4o with tools
+        llm = _get_llm(model="gpt-4o")
+        llm_with_tools = llm.bind_tools(LOCATION_DISCOVERY_TOOLS)
+
+        # Format the system prompt with trip parameters
+        system_prompt = LOCATION_DISCOVERY_PROMPT.format(
+            destination=trip_params.get("destination", "Unknown"),
+            num_days=num_days,
+            travel_style=travel_style,
+            interests=", ".join(trip_params.get("interests", [])),
+            constraints=", ".join(trip_params.get("constraints", [])) or "None",
+            notes=trip_params.get("additional_notes", "None provided"),
+            num_locations=num_locations,
+        )
+
+        # If this is the first call, add the system message
+        if not messages or not any(isinstance(m, SystemMessage) for m in messages):
+            messages.insert(0, SystemMessage(content=system_prompt))
+
+            # Add initial human message to start the conversation
+            messages.append(HumanMessage(
+                content=f"Please find {num_locations} great locations for my trip to {trip_params.get('destination', 'the destination')}."
+            ))
+
+        response = await llm_with_tools.ainvoke(messages)
 
     # Check if the response contains tool calls
     if response.tool_calls:
@@ -139,11 +172,27 @@ async def location_discovery_node(state: TravelPlannerState) -> dict[str, Any]:
     }
 
 
+def _trim_place_details(result: dict) -> dict:
+    """Trim place details to essential fields only to reduce token count."""
+    if "error" in result:
+        return result
+
+    return {
+        "name": result.get("name"),
+        "formatted_address": result.get("formatted_address"),
+        "lat": result.get("lat"),
+        "lng": result.get("lng"),
+        "rating": result.get("rating"),
+        "types": result.get("types", [])[:3],  # Keep only first 3 types
+        "summary": result.get("editorial_summary", ""),
+    }
+
+
 async def tool_executor_node(state: TravelPlannerState) -> dict[str, Any]:
     """
-    Executes tool calls from the LLM.
+    Executes tool calls from the LLM in parallel.
 
-    Gets the last message, executes any tool calls, and returns the results.
+    Gets the last message, executes any tool calls concurrently, and returns the results.
     """
     messages = state.get("messages", [])
     if not messages:
@@ -159,9 +208,8 @@ async def tool_executor_node(state: TravelPlannerState) -> dict[str, Any]:
     all_tools = LOCATION_DISCOVERY_TOOLS + ITINERARY_TOOLS
     tool_lookup = {tool.name: tool for tool in all_tools}
 
-    # Execute each tool call
-    tool_messages = []
-    for tool_call in last_message.tool_calls:
+    async def execute_single_tool(tool_call: dict) -> ToolMessage:
+        """Execute a single tool call and return the ToolMessage."""
         tool_name = tool_call["name"]
         tool_args = tool_call["args"]
         tool_id = tool_call["id"]
@@ -169,8 +217,12 @@ async def tool_executor_node(state: TravelPlannerState) -> dict[str, Any]:
         if tool_name in tool_lookup:
             tool = tool_lookup[tool_name]
             try:
-                # Execute the tool
                 result = await tool.ainvoke(tool_args)
+
+                # Trim place details to reduce token count
+                if tool_name == "get_place_details" and isinstance(result, dict):
+                    result = _trim_place_details(result)
+
                 # Convert result to string if needed
                 if not isinstance(result, str):
                     result = json.dumps(result, indent=2)
@@ -179,11 +231,14 @@ async def tool_executor_node(state: TravelPlannerState) -> dict[str, Any]:
         else:
             result = f"Unknown tool: {tool_name}"
 
-        tool_messages.append(
-            ToolMessage(content=result, tool_call_id=tool_id)
-        )
+        return ToolMessage(content=result, tool_call_id=tool_id)
 
-    return {"messages": tool_messages}
+    # Execute all tool calls in parallel
+    tool_messages = await asyncio.gather(
+        *[execute_single_tool(tc) for tc in last_message.tool_calls]
+    )
+
+    return {"messages": list(tool_messages)}
 
 
 async def itinerary_generator_node(state: TravelPlannerState) -> dict[str, Any]:

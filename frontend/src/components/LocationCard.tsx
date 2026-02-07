@@ -1,6 +1,7 @@
 'use client';
 
 import { Location, DAY_COLORS } from '@/types';
+import PlaceImage from './PlaceImage';
 
 interface LocationCardProps {
   location: Location;
@@ -31,41 +32,46 @@ export default function LocationCard({
 
   return (
     <div
-      className={`group relative p-4 bg-white dark:bg-neutral-800 border rounded-xl transition-all duration-200 cursor-pointer
+      className={`group relative glass-card rounded-2xl overflow-hidden transition-all duration-200 cursor-pointer
         ${
           isHighlighted
-            ? 'border-primary-500 dark:border-primary-400 shadow-md ring-1 ring-primary-500 dark:ring-primary-400'
-            : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600 hover:shadow-sm'
+            ? 'ring-2 ring-primary-500 dark:ring-primary-400 shadow-lg'
+            : 'hover:shadow-card-hover'
         }`}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <div className="flex items-start gap-3">
-        {/* Number badge */}
-        <div
-          className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-semibold shadow-sm"
-          style={{ backgroundColor: markerColor }}
-        >
-          {index}
+      <div className="flex">
+        {/* Thumbnail */}
+        <div className="flex-shrink-0 p-3">
+          <PlaceImage
+            photoReference={location.photo_reference}
+            placeName={location.name}
+            size="md"
+          />
         </div>
 
         {/* Content */}
-        <div className="flex-1 min-w-0 pr-6">
-          {/* Name and badges */}
-          <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex-1 min-w-0 py-3 pr-12">
+          {/* Header with badge and name */}
+          <div className="flex items-center gap-2 mb-1.5">
+            <div
+              className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold shadow-sm"
+              style={{ backgroundColor: markerColor }}
+            >
+              {index}
+            </div>
             <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 truncate">
               {location.name}
             </h3>
             {location.user_added && (
-              <span className="badge-warning">
-                Added by you
-              </span>
+              <span className="badge-warning text-xs">Added by you</span>
             )}
           </div>
 
           {/* Why this fits you */}
-          <p className="mt-1.5 text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2">
+          <p className="text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2">
             {location.why_this_fits_you}
           </p>
 
@@ -90,13 +96,14 @@ export default function LocationCard({
           )}
         </div>
 
-        {/* Remove button - appears on hover */}
+        {/* Remove button - glass effect */}
         <button
           onClick={(e) => {
             e.stopPropagation();
             onRemove();
           }}
-          className="absolute top-3 right-3 p-2 text-neutral-400 dark:text-neutral-500 hover:text-error-500 dark:hover:text-error-400 hover:bg-error-50 dark:hover:bg-error-900/30
+          className="absolute top-2 right-2 p-2 text-neutral-400 dark:text-neutral-500 hover:text-error-500 dark:hover:text-error-400
+            hover:bg-error-50/80 dark:hover:bg-error-900/30 backdrop-blur-sm
             rounded-lg transition-all duration-200 opacity-0 group-hover:opacity-100 focus:opacity-100
             min-w-[44px] min-h-[44px] flex items-center justify-center"
           title="Remove location"

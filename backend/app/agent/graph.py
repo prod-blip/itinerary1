@@ -50,7 +50,7 @@ def create_travel_planner_graph() -> StateGraph:
         should_continue_discovery,
         {
             "tool_executor": "tool_executor",
-            "end_discovery": END,  # Graph pauses here for HITL
+            "end_discovery": "itinerary_generator",  # Proceeds to itinerary (interrupt_before pauses for HITL)
         }
     )
 

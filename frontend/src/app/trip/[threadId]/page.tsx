@@ -141,17 +141,42 @@ export default function TripPage() {
 
   return (
     <div className="h-screen flex flex-col bg-neutral-50 dark:bg-neutral-950 transition-colors">
-      {/* Header */}
-      <header className="bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 px-4 py-3 flex-shrink-0">
+      {/* Header with glassmorphism */}
+      <header className="glass-strong border-b border-neutral-200/50 dark:border-neutral-700/50 px-4 py-3 flex-shrink-0">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-            {tripState?.trip_params?.destination || 'Your Trip'}
-          </h1>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-neutral-500 dark:text-neutral-400">
-              {tripState?.trip_params?.num_days} days -{' '}
-              {tripState?.trip_params?.travel_style} pace
-            </span>
+            {/* Destination icon */}
+            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-sm">
+              <svg
+                className="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+                {tripState?.trip_params?.destination || 'Your Trip'}
+              </h1>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                {tripState?.trip_params?.num_days} days - {tripState?.trip_params?.travel_style} pace
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
             <ThemeToggle />
             {showItinerary && (
               <button
@@ -168,7 +193,7 @@ export default function TripPage() {
       {/* Main content */}
       <div className="flex-1 flex flex-col-reverse lg:flex-row overflow-hidden">
         {/* Left panel - Location list or Itinerary (below map on mobile) */}
-        <div className="flex-1 lg:flex-none lg:w-2/5 overflow-y-auto bg-white dark:bg-neutral-800 lg:border-r border-neutral-200 dark:border-neutral-700">
+        <div className="flex-1 lg:flex-none lg:w-2/5 overflow-y-auto glass lg:border-r border-neutral-200/50 dark:border-neutral-700/50 scrollbar-thin">
           <div className="p-4">
             {showItinerary ? (
               <ItineraryView itinerary={itinerary} />
@@ -189,7 +214,7 @@ export default function TripPage() {
 
       {/* Bottom action bar */}
       {showGenerateButton && (
-        <div className="bg-white dark:bg-neutral-800 border-t border-neutral-200 dark:border-neutral-700 px-4 py-3 flex-shrink-0">
+        <div className="glass-strong border-t border-neutral-200/50 dark:border-neutral-700/50 px-4 py-3 flex-shrink-0">
           <div className="flex items-center justify-between">
             <p className="text-sm text-neutral-600 dark:text-neutral-400">
               {locations.length} locations selected
@@ -199,11 +224,11 @@ export default function TripPage() {
               disabled={
                 generateItineraryMutation.isPending || locations.length === 0
               }
-              className={`px-6 py-2 rounded-lg font-medium transition-all duration-200
+              className={`px-6 py-2.5 rounded-xl font-medium transition-all duration-200
                 ${
                   generateItineraryMutation.isPending || locations.length === 0
                     ? 'bg-neutral-200 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-500 cursor-not-allowed'
-                    : 'bg-primary-600 dark:bg-primary-500 text-white hover:bg-primary-700 dark:hover:bg-primary-600 shadow-sm hover:shadow-primary'
+                    : 'bg-primary-600 dark:bg-primary-500 text-white hover:bg-primary-700 dark:hover:bg-primary-600 shadow-sm hover:shadow-primary-lg hover:scale-[1.02]'
                 }`}
             >
               {generateItineraryMutation.isPending

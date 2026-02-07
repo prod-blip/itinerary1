@@ -140,6 +140,52 @@
 
 /* Component layer styles */
 @layer components {
+  /* Glassmorphism utilities */
+  .glass {
+    @apply bg-white/80 dark:bg-neutral-800/80 backdrop-blur-md
+           border border-white/20 dark:border-neutral-700/30;
+  }
+
+  .glass-strong {
+    @apply bg-white/90 dark:bg-neutral-900/90 backdrop-blur-lg
+           border border-neutral-200/50 dark:border-neutral-700/50;
+  }
+
+  .glass-card {
+    @apply bg-white/70 dark:bg-neutral-800/70 backdrop-blur-md
+           border border-neutral-200/50 dark:border-neutral-700/40
+           shadow-lg;
+  }
+
+  /* Enhanced Shimmer Skeleton */
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      theme('colors.neutral.200') 0%,
+      theme('colors.neutral.100') 50%,
+      theme('colors.neutral.200') 100%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s infinite linear;
+  }
+
+  .dark .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      theme('colors.neutral.700') 0%,
+      theme('colors.neutral.600') 50%,
+      theme('colors.neutral.700') 100%
+    );
+    background-size: 200% 100%;
+  }
+
+  /* Stagger delays for list animations */
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+
   /* Button base */
   .btn {
     @apply inline-flex items-center justify-center gap-2

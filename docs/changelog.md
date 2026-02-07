@@ -11,6 +11,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.0] - 2026-02-01
+
+### Added
+
+- **Value-first landing page redesign:** Hero section with split layout, product mockup, and visual storytelling approach
+- **MapBackground component:** Blurred, low-opacity map background for entire landing page with gradient overlay
+- **HeroMockup component:** High-fidelity preview of trip page showing sample Goa itinerary with glassmorphism styling
+- **PlaceImage component:** Displays place photos with shimmer loading state and gradient fallback icons
+- **LocationCardSkeleton component:** Animated skeleton loader matching Bento card layout
+- **Glassmorphism design system:** Glass and glass-strong CSS utilities with backdrop blur and semi-transparent backgrounds
+- **Hero section:** Product value proposition with "Your Perfect Trip, Visualized" headline, gradient text, CTA button, social proof (500+ trips), and feature highlights
+- **Visual connector:** Gradient line connecting hero section to form section for seamless flow
+- **Decorative background elements:** Subtle colored blurs behind form section for depth
+- **Trust indicators:** "Free to use", "No signup required", "AI-powered" badges below form
+- **Bento card design:** Location cards redesigned with glassmorphism, rounded corners, and thumbnail layout
+- **Thumbnail support:** Added photo_reference field to Location type for Google Places photos
+- **Stagger animations:** hero-float, skeleton-shimmer, and stagger-fade-up keyframe animations
+- **Section icon:** Clipboard icon above "Plan Your Adventure" heading for visual hierarchy
+
+### Changed
+
+- Landing page transformed from form-first to value-first approach with hero above fold
+- IntakeForm component simplified - removed duplicate heading and description (now in page.tsx)
+- IntakeForm styling updated to glass-card with rounded-2xl borders and reduced padding
+- LocationCard redesigned as Bento card with glassmorphism, horizontal thumbnail layout, and improved spacing
+- ItineraryView updated with glass-card styling, 48x48 location thumbnails, and stagger animations on expansion
+- Trip page header enhanced with glassmorphism, destination icon, and improved layout
+- Trip page sidebar updated with glass background and custom scrollbar
+- MapBackground now uses reduced blur (3px vs 8px) and gradient overlay for better map visibility
+- Tailwind config extended with hero-float (6s), skeleton-shimmer (1.5s), and stagger-fade-up animations
+- CSS globals extended with glassmorphism utilities (.glass, .glass-strong, .glass-card) and stagger delay classes
+
+### Removed
+
+- Duplicate "Plan Your Adventure" heading from IntakeForm component
+- Visual Development & Testing section from CLAUDE.md (was placeholder content)
+
+---
+
 ## [1.1.0] - 2026-01-31
 
 ### Added
